@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.2)
+cmake_minimum_required(VERSION 3.0)
 project(dcadec)
 
 set(DCADEC_MAJOR_VERSION 0)
@@ -53,3 +53,22 @@ if(PKG_CONFIG_FOUND)
         install(FILES       "${CMAKE_CURRENT_BINARY_DIR}/dcadec.pc"
                 DESTINATION "lib/pkgconfig")
 endif()
+
+set(BIN_INSTALL_DIR lib CACHE STRING "Install location of binaries")
+set(LIB_INSTALL_DIR lib CACHE STRING "Install location of libraries")
+
+INSTALL(TARGETS dcadec
+        DESTINATION "${CMAKE_INSTALL_PREFIX}/${BIN_INSTALL_DIR}"
+        DESTINATION "${CMAKE_INSTALL_PREFIX}/${LIB_INSTALL_DIR}")
+
+INSTALL(DIRECTORY "include/"
+        DESTINATION "${CMAKE_INSTALL_PREFIX}/include/dcadec")
+
+# uninstall target
+configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/cmake_uninstall.cmake.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
+    IMMEDIATE @ONLY)
+
+add_custom_target(uninstall
+    COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)

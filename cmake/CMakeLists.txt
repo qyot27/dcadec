@@ -25,35 +25,35 @@ endif()
 
 # Define source lists
 set(SRC_LIB
-    "libdcadec/bitstream.c"
-    "libdcadec/core_decoder.c"
-    "libdcadec/dca_context.c"
-    "libdcadec/dmix_tables.c"
-    "libdcadec/exss_parser.c"
-    "libdcadec/idct_fixed.c"
-    "libdcadec/idct_float.c"
-    "libdcadec/interpolator.c"
-    "libdcadec/interpolator_fixed.c"
-    "libdcadec/interpolator_float.c"
-    "libdcadec/ta.c"
-    "libdcadec/xll_decoder.c"
+    "../libdcadec/bitstream.c"
+    "../libdcadec/core_decoder.c"
+    "../libdcadec/dca_context.c"
+    "../libdcadec/dmix_tables.c"
+    "../libdcadec/exss_parser.c"
+    "../libdcadec/idct_fixed.c"
+    "../libdcadec/idct_float.c"
+    "../libdcadec/interpolator.c"
+    "../libdcadec/interpolator_fixed.c"
+    "../libdcadec/interpolator_float.c"
+    "../libdcadec/ta.c"
+    "../libdcadec/xll_decoder.c"
     )
 
 set(INC_LIB
-    "libdcadec/dca_context.h"
+    "../libdcadec/dca_context.h"
     )
 
 if(NOT CONFIG_SMALL)
     set(SRC_LIB ${SRC_LIB}
-        "libdcadec/dca_frame.c"
-        "libdcadec/dca_stream.c"
-        "libdcadec/dca_waveout.c"
+        "../libdcadec/dca_frame.c"
+        "../libdcadec/dca_stream.c"
+        "../libdcadec/dca_waveout.c"
         )
 
     set(INC_LIB ${INC_LIB}
-        "libdcadec/dca_frame.h"
-        "libdcadec/dca_stream.h"
-        "libdcadec/dca_waveout.h"
+        "../libdcadec/dca_frame.h"
+        "../libdcadec/dca_stream.h"
+        "../libdcadec/dca_waveout.h"
     )
 endif()
 
@@ -79,14 +79,14 @@ if(NOT BUILD_PROGRAMS)
 endif()
 
 if(BUILD_DCADEC)
-    add_executable(dcadec-program-cli dcadec.c)
+    add_executable(dcadec-program-cli ../dcadec.c)
     set_target_properties(dcadec-program-cli PROPERTIES OUTPUT_NAME "dcadec")
 
     target_link_libraries(dcadec-program-cli dcadec)
 endif()
 
 if(BUILD_DCACUT)
-    add_executable(dcacut-program-cli dcacut.c)
+    add_executable(dcacut-program-cli ../dcacut.c)
     set_target_properties(dcacut-program-cli PROPERTIES OUTPUT_NAME "dcacut")
 
     target_link_libraries(dcacut-program-cli dcadec)

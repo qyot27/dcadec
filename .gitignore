@@ -9,3 +9,11 @@
 *.pc
 /test/decoded/
 /test/stddev
+/cmake/.ninja_deps
+/cmake/.ninja_log
+cmake/CMakeFiles/*
+cmake/CMakeCache.txt
+cmake/build.ninja
+cmake/cmake_install.cmake
+cmake/cmake_uninstall.cmake
+cmake/rules.ninja

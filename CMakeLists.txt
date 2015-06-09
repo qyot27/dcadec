@@ -30,39 +30,61 @@ set(SRC_LIB
     "libdcadec/xll_decoder.c"
     )
 
+set(INC_LIB
+    "libdcadec/dca_context.h"
+    )
+
 if(NOT CONFIG_SMALL)
     set(SRC_LIB ${SRC_LIB}
         "libdcadec/dca_frame.c"
         "libdcadec/dca_stream.c"
         "libdcadec/dca_waveout.c"
         )
+
+    set(INC_LIB ${INC_LIB}
+        "libdcadec/dca_frame.h"
+        "libdcadec/dca_stream.h"
+        "libdcadec/dca_waveout.h"
+    )
 endif()
 
-add_library(libdcadec ${SRC_LIB})
-set_target_properties(libdcadec PROPERTIES VERSION ${DCADEC_VERSION} SOVERSION ${DCADEC_MAJOR_VERSION})
+add_library(dcadec-static STATIC ${SRC_LIB})
+set_target_properties(dcadec-static PROPERTIES VERSION ${DCADEC_VERSION} SOVERSION ${DCADEC_MAJOR_VERSION} OUTPUT_NAME "dcadec")
 
-add_executable(dcadec dcadec.c)
-add_executable(dcacut dcacut.c)
+if(BUILD_SHARED_LIBS)
+    add_library(dcadec-shared SHARED ${SRC_LIB})
+    set_target_properties(dcadec-shared PROPERTIES VERSION ${DCADEC_VERSION} SOVERSION ${DCADEC_MAJOR_VERSION} OUTPUT_NAME "dcadec")
 
-target_link_libraries(dcadec libdcadec)
-target_link_libraries(dcacut libdcadec)
+    INSTALL(TARGETS dcadec-shared
+            LIBRARY DESTINATION "${CMAKE_INSTALL_PREFIX}/${LIB_INSTALL_DIR}")
+endif()
+
+add_executable(dcadec-cli dcadec.c)
+add_executable(dcacut-cli dcacut.c)
+
+target_link_libraries(dcadec-cli dcadec)
+target_link_libraries(dcacut-cli dcadec)
+
+set(BIN_INSTALL_DIR bin CACHE STRING "Install location of binaries")
+set(LIB_INSTALL_DIR lib CACHE STRING "Install location of libraries")
+
+INSTALL(DIRECTORY
+        DESTINATION "${CMAKE_INSTALL_PREFIX}/include/libdcadec")
+
+INSTALL(FILES ${INC_LIB}
+        DESTINATION "${CMAKE_INSTALL_PREFIX}/include/libdcadec")
+
+INSTALL(TARGETS dcadec-cli dcacut-cli dcadec-static
+        RUNTIME DESTINATION "${CMAKE_INSTALL_PREFIX}/${BIN_INSTALL_DIR}"
+        ARCHIVE DESTINATION "${CMAKE_INSTALL_PREFIX}/${LIB_INSTALL_DIR}"
+        LIBRARY DESTINATION "${CMAKE_INSTALL_PREFIX}/${LIB_INSTALL_DIR}")
 
 include(FindPkgConfig)
 if(PKG_CONFIG_FOUND)
         configure_file("dcadec.pc.in" "dcadec.pc" @ONLY)
         install(FILES       "${CMAKE_CURRENT_BINARY_DIR}/dcadec.pc"
-                DESTINATION "lib/pkgconfig")
+                DESTINATION "${CMAKE_INSTALL_PREFIX}/${LIB_INSTALL_DIR}/pkgconfig")
 endif()
-
-set(BIN_INSTALL_DIR lib CACHE STRING "Install location of binaries")
-set(LIB_INSTALL_DIR lib CACHE STRING "Install location of libraries")
-
-INSTALL(TARGETS dcadec
-        DESTINATION "${CMAKE_INSTALL_PREFIX}/${BIN_INSTALL_DIR}"
-        DESTINATION "${CMAKE_INSTALL_PREFIX}/${LIB_INSTALL_DIR}")
-
-INSTALL(DIRECTORY "include/"
-        DESTINATION "${CMAKE_INSTALL_PREFIX}/include/dcadec")
 
 # uninstall target
 configure_file(
